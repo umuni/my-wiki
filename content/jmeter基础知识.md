@@ -16,7 +16,8 @@
 
 - **特点：** 极其灵活。你可以通过表格配置多个阶段（启动时间、维持时间、停止时间）。
 - **场景：** 适合模拟复杂的负载曲线，比如“阶梯式加压”后再接一个“高峰压力”，最后缓慢退出
-- ![Snipaste_2025-12-19_22-52-45](D:\Program Files\Snipaste\Snipaste-2.10.5-x86\history\temp\Snipaste_2025-12-19_22-52-45.png)
+<img width="2712" height="1319" alt="D1A7443A-F090-4ba6-82EB-92B09C726ABE" src="https://github.com/user-attachments/assets/c51e4eb0-c2ae-4da3-8385-e7866390a5e7" />
+
 
 使用这种方式，整体上会发现始终围绕着开始线程数和时间展开，但是使用Concurrency  Thread Group 
 
@@ -28,7 +29,8 @@
 
 - 使用这种方式，整体上除了目标线程数和时间外，还有一个参数就是阶梯数量，使用阶梯数量这个参数来表达，会使得阶梯加压寻找性能瓶颈更加的直观，比如我继续分10s逐步在10分钟内增加到100个用户，就非常直观。
 
-  ![Snipaste_2025-12-19_23-50-43](D:\Program Files\Snipaste\Snipaste-2.10.5-x86\history\temp\Snipaste_2025-12-19_23-50-43.png)
+<img width="2586" height="1329" alt="image" src="https://github.com/user-attachments/assets/cad39c60-fbe2-4b86-bcd6-ba7ce64a0836" />
+
 
 ### 2. 吞吐量模型 (Arrivals-based)
 
@@ -52,4 +54,5 @@
 <2>、取样器是什么？
 
 取样器怎么用？
+
 
