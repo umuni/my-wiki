@@ -1,20 +1,20 @@
 import { PageLayout, SharedLayout } from "./quartz/cfg"
 import * as Component from "./quartz/components"
 
-// components shared across all pages
+// 所有页面共享的组件（页脚、头部）
 export const sharedPageComponents: SharedLayout = {
   head: Component.Head(),
   header: [],
   afterBody: [],
   footer: Component.Footer({
     links: {
-      GitHub: "https://github.com/jackyzha0/quartz",
-      "Discord Community": "https://discord.gg/cRFFHYye7t",
+      "我的博客": "https://aitest.eu.cc",
+      "联系我": "mailto:xrdtgzl@gmail.com",
     },
   }),
 }
 
-// components for pages that display a single page (e.g. a single note)
+// 笔记详情页布局
 export const defaultContentPageLayout: PageLayout = {
   beforeBody: [
     Component.ConditionalRender({
@@ -24,6 +24,11 @@ export const defaultContentPageLayout: PageLayout = {
     Component.ArticleTitle(),
     Component.ContentMeta(),
     Component.TagList(),
+    // 【优化】将大纲放在正文上方，默认折叠，节省空间
+    Component.DesktopOnly(Component.TableOfContents({ 
+      title: "本文大纲", 
+      layout: "stacked" 
+    })),
   ],
   left: [
     Component.PageTitle(),
@@ -38,16 +43,23 @@ export const defaultContentPageLayout: PageLayout = {
         { Component: Component.ReaderMode() },
       ],
     }),
-    Component.Explorer(),
+    // 【优化】左侧目录：开启默认收缩功能
+    Component.Explorer({
+      title: "内容目录",
+      useSavedState: true,
+    }),
+    // 【优化】将关系图谱移至左侧下方
+    Component.DesktopOnly(Component.Graph({
+      localGraph: { title: "页面关系", drag: true, zoom: true },
+      globalGraph: { title: "全库图谱", drag: true, zoom: true },
+    })),
+    // 【优化】将反向链接移至左侧下方
+    Component.DesktopOnly(Component.Backlinks({})),
   ],
-  right: [
-    Component.Graph(),
-    Component.DesktopOnly(Component.TableOfContents()),
-    Component.Backlinks(),
-  ],
+  right: [], // 【关键】彻底清空右侧栏，实现宽屏阅读
 }
 
-// components for pages that display lists of pages  (e.g. tags or folders)
+// 列表页布局（标签页、文件夹页）
 export const defaultListPageLayout: PageLayout = {
   beforeBody: [Component.Breadcrumbs(), Component.ArticleTitle(), Component.ContentMeta()],
   left: [
@@ -55,14 +67,11 @@ export const defaultListPageLayout: PageLayout = {
     Component.MobileOnly(Component.Spacer()),
     Component.Flex({
       components: [
-        {
-          Component: Component.Search(),
-          grow: true,
-        },
+        { Component: Component.Search(), grow: true },
         { Component: Component.Darkmode() },
       ],
     }),
-    Component.Explorer(),
+    Component.Explorer({ title: "目录" }),
   ],
   right: [],
 }

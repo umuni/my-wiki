@@ -1,3 +1,24 @@
 @use "./base.scss";
 
 // put your custom CSS here!
+// 强制正文区域使用全部剩余空间
+.center {
+    max-width: 900px; // 稍微调大一点正文宽度，提高阅读效率
+    margin: 0 auto;
+  }
+  
+  // 优化左侧栏宽度和滚动条
+  .sidebar.left {
+    width: 300px; // 固定一个合适的宽度
+    padding-right: 1.5rem;
+    
+    // 给 Explorer 增加一点收缩时的动画
+    .explorer {
+      transition: all 0.3s ease;
+    }
+  }
+  
+  // 隐藏右侧留白
+  .sidebar.right {
+    display: none !important;
+  }
