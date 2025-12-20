@@ -22,3 +22,44 @@
   .sidebar.right {
     display: none !important;
   }
+  // index.md 专属样式
+.center {
+  h1 {
+    background: linear-gradient(to right, #2b4b63, #4a9eff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  blockquote {
+    border-left: 4px solid #4a9eff;
+    background: rgba(74, 158, 255, 0.05);
+    font-style: normal;
+    padding: 1rem;
+    border-radius: 0 8px 8px 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    
+    th {
+      background-color: var(--highlight);
+      color: var(--dark);
+      border-radius: 4px;
+    }
+    
+    td {
+      padding: 15px;
+      background: var(--lightgray);
+      border-radius: 6px;
+      transition: transform 0.2s;
+      &:hover {
+        transform: translateY(-3px);
+      }
+    }
+  }
+}
