@@ -18,11 +18,11 @@
     }
   }
   
-  // 隐藏右侧留白
-  .sidebar.right {
-    display: none !important;
-  }
-  // index.md 专属样式
+// 隐藏右侧留白
+.sidebar.right {
+  display: none !important;
+}
+// index.md 专属样式
 .center {
   h1 {
     background: linear-gradient(to right, #2b4b63, #4a9eff);
@@ -62,4 +62,14 @@
       }
     }
   }
+}
+
+// 修复首页标题前面的图标在未选中时变灰的问题：
+// 对文章标题使用普通文字颜色，而不是渐变描边，这样前面的 🚀 等图标始终为彩色
+.article-title {
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  -webkit-text-fill-color: initial !important;
+  color: #2b4b63;
 }
