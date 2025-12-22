@@ -14,7 +14,7 @@ export const sharedPageComponents: SharedLayout = {
   }),
 }
 
-// 笔记详情页布局（包括首页/欢迎页）
+// 笔记详情页布局
 export const defaultContentPageLayout: PageLayout = {
   beforeBody: [
     Component.ConditionalRender({
@@ -37,56 +37,30 @@ export const defaultContentPageLayout: PageLayout = {
         { Component: Component.ReaderMode() },
       ],
     }),
-    // 【要求 2】目录结构迭代：实现只展示一级目录且自动切换展开
-    // 【要求 2】目录结构迭代：实现只展示一级目录且在欢迎页可见
+    // 【要求 2】目录结构修复
     Component.Explorer({
       title: "内容目录",
-      useSavedState: false,           // 必须为 false，确保每次加载页面都重置为默认状态
-      folderDefaultState: "collapsed", // 【新增】默认收起，首页将只展示“性能测试”等一级分类
-      folderClickBehavior: "toggle",   // 【新增】点击文件夹名即展开/收起，实现手风琴交互
+      useSavedState: false, // 必须为 false，确保每次刷新都重新应用排序逻辑
+      // 增加安全检查，防止 a 或 b 为空导致目录消失
       sortFn: (a: any, b: any) => {
-        // 沿用你验证成功的 a.name 升序逻辑
-        if (a.file !== b.file) {
-          return a.file ? 1 : -1
+        const nameA = a?.name ?? ""
+        const nameB = b?.name ?? ""
+        if (a?.file !== b?.file) {
+          return a?.file ? 1 : -1
         }
-        return a.name.localeCompare(b.name, undefined, {
+        // 强制使用 name 升序排列 (01 -> 06)
+        return nameA.localeCompare(nameB, undefined, {
           numeric: true,
           sensitivity: "base",
         })
       },
       mapFn: (node: any) => {
-        // 沿用你验证成功的序号隐藏逻辑
+        // 视觉上隐藏 01- 这种前缀（先判断是否存在）
         if (node.displayName) {
           node.displayName = node.displayName.replace(/^\d+[-_]/, "")
         }
       },
     } as any),
-    //--------------------------------
-
-    //-------------------
-    // 【要求 2】目录结构迭代：解决欢迎页不显示问题
-    // Component.Explorer({
-    //   title: "内容目录",
-    //   useSavedState: false, 
-    //   folderDefaultState: "open", // 【核心新增】强制展开目录，确保首页加载即显示
-    //   folderClickBehavior: "toggle", // 确保点击文件夹可以自由收起/展开
-    //   sortFn: (a: any, b: any) => {
-    //     if (a.file !== b.file) {
-    //       return a.file ? 1 : -1
-    //     }
-    //     // 沿用你验证成功的 a.name 升序逻辑
-    //     return a.name.localeCompare(b.name, undefined, {
-    //       numeric: true,
-    //       sensitivity: "base",
-    //     })
-    //   },
-    //   mapFn: (node: any) => {
-    //     // 沿用你验证成功的序号隐藏逻辑
-    //     if (node.displayName) {
-    //       node.displayName = node.displayName.replace(/^\d+[-_]/, "")
-    //     }
-    //   },
-    // } as any),
   ],
   right: [
     // 【要求 3】图谱置顶
@@ -113,9 +87,8 @@ export const defaultListPageLayout: PageLayout = {
     Component.Explorer({ 
       title: "内容目录",
       useSavedState: false,
-      folderDefaultState: "open", // 同步新增
-      folderClickBehavior: "toggle",
       sortFn: (a: any, b: any) => {
+        // 增加安全检查，防止 a 或 b 为空导致目录消失
         const nameA = a?.name ?? ""
         const nameB = b?.name ?? ""
         if (a?.file !== b?.file) {
