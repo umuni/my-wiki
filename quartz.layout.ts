@@ -38,11 +38,12 @@ export const defaultContentPageLayout: PageLayout = {
       ],
     }),
     // 【要求 2】目录结构迭代：实现只展示一级目录且自动切换展开
+    // 【要求 2】目录结构迭代：实现只展示一级目录且在欢迎页可见
     Component.Explorer({
       title: "内容目录",
-      useSavedState: false,        // 【核心】不保存状态，确保每次页面加载都遵循默认收起逻辑
-      folderDefaultState: "collapsed", // 【核心】默认收起所有文件夹，从而只显示第一层级
-      folderClickBehavior: "toggle", // 【核心】点击文件夹名即展开/收起，而不是直接跳转
+      useSavedState: false,           // 必须为 false，确保每次加载页面都重置为默认状态
+      folderDefaultState: "collapsed", // 【新增】默认收起，首页将只展示“性能测试”等一级分类
+      folderClickBehavior: "toggle",   // 【新增】点击文件夹名即展开/收起，实现手风琴交互
       sortFn: (a: any, b: any) => {
         // 沿用你验证成功的 a.name 升序逻辑
         if (a.file !== b.file) {
