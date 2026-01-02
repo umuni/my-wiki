@@ -2,44 +2,62 @@
 title: 账号注册
 ---
 
-<div class="auth-box" style="max-width: 450px; margin: 40px auto; border: 1px solid #ddd; padding: 25px; border-radius: 12px;">
+<div id="auth-box" style="max-width: 400px; margin: 40px auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
   <form id="reg-form">
     <div style="margin-bottom: 15px;">
-      <label>用户名 (6-10位纯字母):</label>
-      <input type="text" name="username" id="u" required style="width:100%; padding:8px;">
+      <label style="display: block;">设置用户名 (6-10位字母)</label>
+      <input type="text" id="username" required style="width: 100%; padding: 8px;">
     </div>
     <div style="margin-bottom: 20px;">
-      <label>密码 (6-10位,含数字/大小写/符号):</label>
-      <input type="password" name="password" id="p" required style="width:100%; padding:8px;">
+      <label style="display: block;">设置密码 (6-10位,含符号/数字/大小写)</label>
+      <input type="password" id="password" required style="width: 100%; padding: 8px;">
     </div>
-    <button type="submit" style="width:100%; padding:12px; background:#38a169; color:white; border:none; cursor:pointer;">确认注册</button>
+    <button type="button" id="reg-btn" style="width: 100%; padding: 10px; background: #38a169; color: white; border: none; border-radius: 5px; cursor: pointer;">确认注册</button>
   </form>
+  <p style="text-align: center; margin-top: 15px;">已有账号？<a href="/login">去登录</a></p>
 </div>
 
 <script>
-document.getElementById('reg-form').onsubmit = async (e) => {
-  e.preventDefault();
-  const u = document.getElementById('u').value;
-  const p = document.getElementById('p').value;
+// 使用匿名函数包裹，防止 Quartz 页面切换导致的变量冲突
+(function() {
+  const btn = document.getElementById('reg-btn');
+  if (!btn) return;
 
-  // 前端正则预检
-  const uReg = /^[a-zA-Z]{6,10}$/;
-  const pReg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>])\S{6,10}$/;
+  btn.onclick = async () => {
+    const u = document.getElementById('username').value;
+    const p = document.getElementById('password').value;
 
-  if(!uReg.test(u)) { alert("用户名格式不符：只能输入6-10位字母！"); return; }
-  if(!pReg.test(p)) { alert("密码强度不足：需包含数字、大小写字母及特殊符号，长度6-10位！"); return; }
+    // 1. 前端正则校验 (对应你要求的规则)
+    const uReg = /^[a-zA-Z]{6,10}$/;
+    const pReg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>])\S{6,10}$/;
 
-  const resp = await fetch('/api/register', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({username: u, password: p})
-  });
+    if(!uReg.test(u)) { alert("用户名不符合要求！(6-10位纯字母)"); return; }
+    if(!pReg.test(p)) { alert("密码强度不足！(6-10位,需含数字/大小写/特殊符号)"); return; }
 
-  if (resp.ok) {
-    alert("注册成功！");
-    window.location.href = '/login';
-  } else {
-    alert(await resp.text());
-  }
-};
+    btn.innerText = "提交中...";
+    btn.disabled = true;
+
+    try {
+      // 2. 发送请求
+      const resp = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: u, password: p })
+      });
+
+      if (resp.ok) {
+        alert("注册成功！马上为你跳转登录");
+        window.location.href = '/login';
+      } else {
+        const msg = await resp.text();
+        alert("注册失败：" + msg);
+      }
+    } catch (err) {
+      alert("网络错误，请检查 API 是否部署成功");
+    } finally {
+      btn.innerText = "确认注册";
+      btn.disabled = false;
+    }
+  };
+})();
 </script>
