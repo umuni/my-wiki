@@ -18,61 +18,65 @@ title: 账号注册
 </div>
 
 <script>
-// 使用全局函数或重新定义的逻辑来适配 Quartz 的 SPA 切换
-function startRegistrationLogic() {
-  const btn = document.getElementById('reg-btn');
-  if (!btn) return;
-  
-  console.log("✅ 注册脚本已成功绑定到按钮");
+// 使用全隔离的逻辑，避免被编译器干扰
+(function() {
+  const init = () => {
+    const btn = document.getElementById('reg-btn');
+    if (!btn || btn.dataset.bound) return;
+    btn.dataset.bound = "true";
 
-  btn.onclick = async () => {
-    const u = document.getElementById('username').value;
-    const p = document.getElementById('password').value;
-
-    // 1. 严格规则校验
-    const uReg = /^[a-zA-Z]{6,10}$/;
-    // 【核心修复】：使用 \x26 代替 &，防止被转义成 &amp;
-    const pReg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^\x26*(),.?":{}|<>])\S{6,10}$/;
-
-    if(!uReg.test(u)) { 
-      alert("用户名不符合要求！(只能输入6-10位大小写字母)"); 
-      return; 
-    }
-    if(!pReg.test(p)) { 
-      alert("密码强度不足！(6-10位，需包含数字、大小写字母及特殊符号，且不能有空格)"); 
-      return; 
-    }
-
-    btn.innerText = "提交中...";
-    btn.disabled = true;
-
-    try {
-      console.log("🚀 正在发送注册请求...");
-      const resp = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: u, password: p })
-      });
-
-      if (resp.ok) {
-        alert("🎉 注册成功！马上跳转登录");
-        window.location.href = '/login';
-      } else {
-        const msg = await resp.text();
-        alert("❌ 注册失败：" + msg);
+    console.log("✅ 注册脚本已激活");
+    
+    btn.onclick = async () => {
+      const u = document.getElementById('username').value;
+      const p = document.getElementById('password').value;
+    
+      // 1. 动态构造正则表达式，绕开 HTML 转义
+      // 用 String.fromCharCode(38) 代替直接写 &
+      const ampersand = String.fromCharCode(38);
+      const userPattern = "^[a-zA-Z]{6,10}$";
+      // 将特殊符号里的 & 替换为动态生成的字符
+      const pwdPattern = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%" + ampersand + "^*(),.?\":{}|<>])\\S{6,10}$";
+      
+      const uReg = new RegExp(userPattern);
+      const pReg = new RegExp(pwdPattern);
+    
+      if(!uReg.test(u)) { 
+        alert("用户名不符合要求！(只能输入6-10位大小写字母)"); 
+        return; 
       }
-    } catch (err) {
-      alert("网络错误，请检查服务器");
-      console.error("Fetch Error:", err);
-    } finally {
-      btn.innerText = "确认注册";
-      btn.disabled = false;
-    }
+      if(!pReg.test(p)) { 
+        alert("密码强度不足！(6-10位，需包含数字、大小写字母及特殊符号，且不能有空格)"); 
+        return; 
+      }
+    
+      btn.innerText = "提交中...";
+      btn.disabled = true;
+    
+      try {
+        const resp = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: u, password: p })
+        });
+    
+        if (resp.ok) {
+          alert("🎉 注册成功！");
+          window.location.href = '/login';
+        } else {
+          const msg = await resp.text();
+          alert("❌ 注册失败：" + msg);
+        }
+      } catch (err) {
+        alert("网络错误");
+      } finally {
+        btn.innerText = "确认注册";
+        btn.disabled = false;
+      }
+    };
   };
-}
 
-// 适配 Quartz 的页面导航事件
-document.addEventListener("nav", startRegistrationLogic);
-// 同时也尝试直接运行一次
-startRegistrationLogic();
+  document.addEventListener("nav", init);
+  init();
+})();
 </script>
