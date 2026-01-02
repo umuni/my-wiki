@@ -15,4 +15,4 @@ title: 账号注册
   <p style="text-align: center;"><a href="/login">已有账号？去登录</a></p>
 </div>
 
-<script src="/static/auth-logic.js"></script>
+<script src="/auth-logic.js"></script>
