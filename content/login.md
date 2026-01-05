@@ -15,4 +15,4 @@ title: 知识库登录
   <p style="text-align: center;"><a href="/register">没账号？去注册</a></p>
 </div>
 
-<script src="/auth-logic.js"></script>
+<script src="/static/auth-logic.js"></script>
